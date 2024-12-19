@@ -4,27 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Indus Soul Review Card</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f5f5f5;
       margin: 0;
       padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       margin: 0 auto;
       padding: 20px;
       background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       text-align: center;
+      overflow: hidden;
+      opacity: 0;
     }
     h2 {
       color: #333;
       font-size: 24px;
       margin-bottom: 20px;
+      text-transform: uppercase;
+      font-weight: bold;
     }
     .input-field {
       width: 100%;
@@ -33,6 +42,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 16px;
+      box-sizing: border-box;
     }
     .btn {
       width: 100%;
@@ -43,16 +53,28 @@
       border-radius: 4px;
       font-size: 16px;
       cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
     }
     .btn:hover {
       background-color: #357ae8;
     }
-    .otp-container, .final-container {
-      display: none;
-    }
     .error-message {
       color: red;
       margin-top: 10px;
+      font-size: 14px;
+    }
+    .otp-container, .final-container {
+      display: none;
+    }
+    @media (max-width: 480px) {
+      .container {
+        width: 90%;
+        padding: 15px;
+      }
+      h2 {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -61,15 +83,16 @@
 <div class="container" id="userForm">
   <h2>Enter Your Details</h2>
   <input type="text" id="userName" class="input-field" placeholder="Your Name" />
-  <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
+  <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number (+91XXXXXXXXXX)" />
   <button class="btn" id="nextBtn" onclick="goToPasskey()">Next</button>
+  <p class="error-message" id="phoneError" style="display:none;">Please enter a valid phone number in the format +91XXXXXXXXXX.</p>
 </div>
 
 <div class="container otp-container" id="passkeyForm">
   <h2>Enter Passkey</h2>
   <input type="text" id="passkeyInput" class="input-field" placeholder="Enter Passkey (yyyyddmm)" />
   <button class="btn" onclick="verifyPasskey()">Verify Passkey</button>
-  <p class="error-message" id="errorMessage" style="display:none;">Incorrect passkey. Please try again.</p>
+  <p class="error-message" id="passkeyError" style="display:none;">Incorrect passkey. Please try again.</p>
 </div>
 
 <div class="container final-container" id="finalPage">
@@ -78,42 +101,59 @@
 </div>
 
 <script>
-  // Function to show passkey screen
+  // GSAP Animation for smooth transitions
+  function animateIn(element) {
+    gsap.from(element, { opacity: 0, duration: 1, y: 50 });
+  }
+
+  function animateOut(element) {
+    gsap.to(element, { opacity: 0, duration: 1, y: -50 });
+  }
+
+  // Show passkey form after user details
   function goToPasskey() {
     const userName = document.getElementById('userName').value;
     const userPhone = document.getElementById('userPhone').value;
+    const phoneError = document.getElementById('phoneError');
 
-    console.log('User Name:', userName);
-    console.log('User Phone:', userPhone);
+    // Phone number validation: +91 followed by 10 digits
+    const phoneRegex = /^\+91\d{10}$/;
 
-    if (userName && userPhone) {
-      document.getElementById('userForm').style.display = 'none';
-      document.getElementById('passkeyForm').style.display = 'block';
+    if (userName && phoneRegex.test(userPhone)) {
+      document.getElementById('phoneError').style.display = 'none';
+      animateOut(document.getElementById('userForm'));
+      setTimeout(() => {
+        document.getElementById('userForm').style.display = 'none';
+        document.getElementById('passkeyForm').style.display = 'block';
+        animateIn(document.getElementById('passkeyForm'));
+      }, 500);
     } else {
-      alert('Please fill in both name and phone number');
+      phoneError.style.display = 'block';
     }
   }
 
   // Function to verify passkey
   function verifyPasskey() {
     const passkeyInput = document.getElementById('passkeyInput').value;
-    const errorMessage = document.getElementById('errorMessage');
-
-    // Get today's date in format yyyyMMdd (e.g., 20241219 for 19-12-2024)
+    const passkeyError = document.getElementById('passkeyError');
     const today = new Date();
     const formattedDate = today.getFullYear() + 
                           today.getDate().toString().padStart(2, '0') + 
                           (today.getMonth() + 1).toString().padStart(2, '0');
-    
-    // Compare input passkey with today's date in yyyyddmm format
+
+    // Verify passkey with today's date in yyyyddmm format
     if (passkeyInput === formattedDate) {
-      document.getElementById('passkeyForm').style.display = 'none';
-      document.getElementById('finalPage').style.display = 'block';
-      setTimeout(function() {
-        window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
-      }, 2000);
+      animateOut(document.getElementById('passkeyForm'));
+      setTimeout(() => {
+        document.getElementById('passkeyForm').style.display = 'none';
+        document.getElementById('finalPage').style.display = 'block';
+        animateIn(document.getElementById('finalPage'));
+        setTimeout(function() {
+          window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
+        }, 2000);
+      }, 500);
     } else {
-      errorMessage.style.display = 'block';  // Show error message if passkey is incorrect
+      passkeyError.style.display = 'block';
     }
   }
 </script>
