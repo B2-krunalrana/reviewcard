@@ -67,7 +67,7 @@
 
 <div class="container otp-container" id="passkeyForm">
   <h2>Enter Passkey</h2>
-  <input type="text" id="passkeyInput" class="input-field" placeholder="Enter Passkey (yyMMdd)" />
+  <input type="text" id="passkeyInput" class="input-field" placeholder="Enter Passkey (yyyyddmm)" />
   <button class="btn" onclick="verifyPasskey()">Verify Passkey</button>
   <p class="error-message" id="errorMessage" style="display:none;">Incorrect passkey. Please try again.</p>
 </div>
@@ -99,13 +99,13 @@
     const passkeyInput = document.getElementById('passkeyInput').value;
     const errorMessage = document.getElementById('errorMessage');
 
-    // Get today's date in format yyMMdd (e.g., 241219 for 19-12-2024)
+    // Get today's date in format yyyyMMdd (e.g., 20241219 for 19-12-2024)
     const today = new Date();
-    const formattedDate = (today.getFullYear() % 100).toString().padStart(2, '0') + 
-                          (today.getMonth() + 1).toString().padStart(2, '0') + 
-                          today.getDate().toString().padStart(2, '0');
+    const formattedDate = today.getFullYear() + 
+                          today.getDate().toString().padStart(2, '0') + 
+                          (today.getMonth() + 1).toString().padStart(2, '0');
     
-    // Compare input passkey with today's date
+    // Compare input passkey with today's date in yyyyddmm format
     if (passkeyInput === formattedDate) {
       document.getElementById('passkeyForm').style.display = 'none';
       document.getElementById('finalPage').style.display = 'block';
