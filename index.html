@@ -4,20 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Indus Soul Review Card</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f2f2f2; /* Soft gray background for a professional look */
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      flex-direction: column;
     }
-
     .container {
       width: 100%;
       max-width: 450px;
@@ -28,16 +27,14 @@
       text-align: center;
       opacity: 0;
       transform: translateY(20px);
-      display: none; /* Hide all cards initially */
+      display: none;
     }
-
     h2 {
       color: #333;
       font-size: 28px;
       font-weight: 600;
       margin-bottom: 20px;
     }
-
     .input-field {
       width: 100%;
       padding: 14px;
@@ -45,9 +42,7 @@
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 16px;
-      box-sizing: border-box;
     }
-
     .btn {
       width: 100%;
       padding: 14px;
@@ -58,30 +53,28 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
-
     .btn:hover {
       background-color: #357ae8;
     }
-
     .error-message {
       color: #ff4d4d;
       margin-top: 10px;
       font-size: 14px;
     }
-
-    /* Mobile-First Styles */
-    @media (max-width: 480px) {
-      .container {
-        padding: 25px;
-      }
-      h2 {
-        font-size: 24px;
-      }
-      .input-field, .btn {
-        padding: 12px;
-      }
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      background-color: #f1f1f1;
+      font-size: 14px;
+      color: #333;
+      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+    }
+    footer p {
+      margin: 0;
     }
   </style>
 </head>
@@ -106,18 +99,66 @@
   <p>Redirecting to review page...</p>
 </div>
 
+<footer id="footer">
+  <p id="deviceInfo">Loading device information...</p>
+</footer>
+
 <script>
   // GSAP Animation for smooth transitions
   function fadeIn(element) {
     gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
   }
 
+  // Collect device and browser information
+  function getUserInfo() {
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    const language = navigator.language || navigator.userLanguage;
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const deviceInfo = {
+      userAgent: userAgent,
+      platform: platform,
+      language: language,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      viewportWidth: viewportWidth,
+      viewportHeight: viewportHeight
+    };
+
+    console.log('Device Information:', deviceInfo);
+    return deviceInfo;
+  }
+
+  // Show the device info when the page loads
+  window.onload = function() {
+    const deviceInfo = getUserInfo(); // Get user device info
+
+    // Construct a string for device information to display in footer
+    const infoString = `
+      User Agent: ${deviceInfo.userAgent}<br>
+      Platform: ${deviceInfo.platform}<br>
+      Language: ${deviceInfo.language}<br>
+      Screen: ${deviceInfo.screenWidth} x ${deviceInfo.screenHeight}<br>
+      Viewport: ${deviceInfo.viewportWidth} x ${deviceInfo.viewportHeight}
+    `;
+
+    // Update the footer with device information
+    document.getElementById('deviceInfo').innerHTML = infoString;
+    
+    // Show the first card (userForm)
+    document.getElementById('userForm').style.display = 'block';
+    fadeIn('#userForm');
+  };
+
   function goToPasskey() {
     const userName = document.getElementById('userName').value;
     const userPhone = document.getElementById('userPhone').value;
 
     if (userName && userPhone) {
-      // Hide current form and show the passkey form
       document.getElementById('userForm').style.display = 'none';
       document.getElementById('passkeyForm').style.display = 'block';
       fadeIn('#passkeyForm');
@@ -126,39 +167,26 @@
     }
   }
 
-  // Function to verify passkey
   function verifyPasskey() {
     const passkeyInput = document.getElementById('passkeyInput').value;
     const errorMessage = document.getElementById('errorMessage');
 
-    // Get today's date in format yyyyMMdd (e.g., 20241219 for 19-12-2024)
     const today = new Date();
     const formattedDate = today.getFullYear() + 
                           today.getDate().toString().padStart(2, '0') + 
                           (today.getMonth() + 1).toString().padStart(2, '0');
-    
-    // Compare input passkey with today's date in yyyyddmm format
+
     if (passkeyInput === formattedDate) {
-      // Hide current form and show the final page
       document.getElementById('passkeyForm').style.display = 'none';
       document.getElementById('finalPage').style.display = 'block';
       fadeIn('#finalPage');
-      
-      // Redirect after a small delay
       setTimeout(function() {
         window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
       }, 2000);
     } else {
-      errorMessage.style.display = 'block';  // Show error message if passkey is incorrect
+      errorMessage.style.display = 'block';
     }
   }
-
-  // Initial animation for the user form
-  window.onload = function() {
-    // Show the first card (userForm)
-    document.getElementById('userForm').style.display = 'block';
-    fadeIn('#userForm');
-  };
 </script>
 
 </body>
