@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Indus soul review card</title>
+  <title>Indus Soul Review Card</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,14 +19,16 @@
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
     }
     h2 {
-      text-align: center;
       color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
     }
     .input-field {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       margin: 10px 0;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -48,6 +50,10 @@
     .otp-container, .final-container {
       display: none;
     }
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -56,13 +62,14 @@
   <h2>Enter Your Details</h2>
   <input type="text" id="userName" class="input-field" placeholder="Your Name" />
   <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
-  <button class="btn" id="nextBtn" onclick="goToOtp()">Next</button>
+  <button class="btn" id="nextBtn" onclick="goToPasskey()">Next</button>
 </div>
 
-<div class="container otp-container" id="otpForm">
-  <h2>Enter OTP</h2>
-  <input type="text" id="otpInput" class="input-field" placeholder="Enter OTP" />
-  <button class="btn" onclick="verifyOtp()">Verify OTP</button>
+<div class="container otp-container" id="passkeyForm">
+  <h2>Enter Passkey</h2>
+  <input type="text" id="passkeyInput" class="input-field" placeholder="Enter Passkey (yyMMdd)" />
+  <button class="btn" onclick="verifyPasskey()">Verify Passkey</button>
+  <p class="error-message" id="errorMessage" style="display:none;">Incorrect passkey. Please try again.</p>
 </div>
 
 <div class="container final-container" id="finalPage">
@@ -71,8 +78,8 @@
 </div>
 
 <script>
-  // Function to show OTP screen
-  function goToOtp() {
+  // Function to show passkey screen
+  function goToPasskey() {
     const userName = document.getElementById('userName').value;
     const userPhone = document.getElementById('userPhone').value;
 
@@ -81,24 +88,32 @@
 
     if (userName && userPhone) {
       document.getElementById('userForm').style.display = 'none';
-      document.getElementById('otpForm').style.display = 'block';
+      document.getElementById('passkeyForm').style.display = 'block';
     } else {
       alert('Please fill in both name and phone number');
     }
   }
 
-  // Function to verify OTP
-  function verifyOtp() {
-    const otpInput = document.getElementById('otpInput').value;
+  // Function to verify passkey
+  function verifyPasskey() {
+    const passkeyInput = document.getElementById('passkeyInput').value;
+    const errorMessage = document.getElementById('errorMessage');
 
-    if (otpInput === '2704') {
-      document.getElementById('otpForm').style.display = 'none';
+    // Get today's date in format yyMMdd (e.g., 241219 for 19-12-2024)
+    const today = new Date();
+    const formattedDate = (today.getFullYear() % 100).toString().padStart(2, '0') + 
+                          (today.getMonth() + 1).toString().padStart(2, '0') + 
+                          today.getDate().toString().padStart(2, '0');
+    
+    // Compare input passkey with today's date
+    if (passkeyInput === formattedDate) {
+      document.getElementById('passkeyForm').style.display = 'none';
       document.getElementById('finalPage').style.display = 'block';
       setTimeout(function() {
         window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
       }, 2000);
     } else {
-      alert('Incorrect OTP');
+      errorMessage.style.display = 'block';  // Show error message if passkey is incorrect
     }
   }
 </script>
