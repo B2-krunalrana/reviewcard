@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Indus Soul Review Card</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f2f2f2; /* Soft gray background for a professional look */
       margin: 0;
       padding: 0;
       display: flex;
@@ -16,64 +17,69 @@
       align-items: center;
       height: 100vh;
     }
+
     .container {
       width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
+      max-width: 450px;
+      background-color: #ffffff;
+      padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
       text-align: center;
-      overflow: hidden;
-      opacity: 0;
+      transform: scale(1);
+      transition: transform 0.3s ease-in-out;
     }
+
     h2 {
       color: #333;
-      font-size: 24px;
+      font-size: 28px;
+      font-weight: 600;
       margin-bottom: 20px;
-      text-transform: uppercase;
-      font-weight: bold;
     }
+
     .input-field {
       width: 100%;
       padding: 14px;
-      margin: 10px 0;
+      margin: 15px 0;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 16px;
       box-sizing: border-box;
     }
+
     .btn {
       width: 100%;
       padding: 14px;
       background-color: #4285f4;
-      color: #fff;
+      color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      margin-top: 20px;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s ease;
     }
+
     .btn:hover {
       background-color: #357ae8;
     }
+
     .error-message {
-      color: red;
+      color: #ff4d4d;
       margin-top: 10px;
       font-size: 14px;
     }
-    .otp-container, .final-container {
-      display: none;
-    }
+
+    /* Mobile-First Styles */
     @media (max-width: 480px) {
       .container {
-        width: 90%;
-        padding: 15px;
+        padding: 25px;
       }
       h2 {
-        font-size: 20px;
+        font-size: 24px;
+      }
+      .input-field, .btn {
+        padding: 12px;
       }
     }
   </style>
@@ -83,16 +89,15 @@
 <div class="container" id="userForm">
   <h2>Enter Your Details</h2>
   <input type="text" id="userName" class="input-field" placeholder="Your Name" />
-  <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number (+91XXXXXXXXXX)" />
+  <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
   <button class="btn" id="nextBtn" onclick="goToPasskey()">Next</button>
-  <p class="error-message" id="phoneError" style="display:none;">Please enter a valid phone number in the format +91XXXXXXXXXX.</p>
 </div>
 
 <div class="container otp-container" id="passkeyForm">
   <h2>Enter Passkey</h2>
   <input type="text" id="passkeyInput" class="input-field" placeholder="Enter Passkey (yyyyddmm)" />
   <button class="btn" onclick="verifyPasskey()">Verify Passkey</button>
-  <p class="error-message" id="passkeyError" style="display:none;">Incorrect passkey. Please try again.</p>
+  <p class="error-message" id="errorMessage" style="display:none;">Incorrect passkey. Please try again.</p>
 </div>
 
 <div class="container final-container" id="finalPage">
@@ -102,60 +107,49 @@
 
 <script>
   // GSAP Animation for smooth transitions
-  function animateIn(element) {
-    gsap.from(element, { opacity: 0, duration: 1, y: 50 });
+  function fadeIn(element) {
+    gsap.from(element, { opacity: 0, duration: 1, ease: 'power2.out' });
   }
-
-  function animateOut(element) {
-    gsap.to(element, { opacity: 0, duration: 1, y: -50 });
-  }
-
-  // Show passkey form after user details
+  
   function goToPasskey() {
     const userName = document.getElementById('userName').value;
     const userPhone = document.getElementById('userPhone').value;
-    const phoneError = document.getElementById('phoneError');
 
-    // Phone number validation: +91 followed by 10 digits
-    const phoneRegex = /^\+91\d{10}$/;
-
-    if (userName && phoneRegex.test(userPhone)) {
-      document.getElementById('phoneError').style.display = 'none';
-      animateOut(document.getElementById('userForm'));
-      setTimeout(() => {
-        document.getElementById('userForm').style.display = 'none';
-        document.getElementById('passkeyForm').style.display = 'block';
-        animateIn(document.getElementById('passkeyForm'));
-      }, 500);
+    if (userName && userPhone) {
+      document.getElementById('userForm').style.display = 'none';
+      document.getElementById('passkeyForm').style.display = 'block';
+      fadeIn('#passkeyForm');
     } else {
-      phoneError.style.display = 'block';
+      alert('Please fill in both name and phone number');
     }
   }
 
   // Function to verify passkey
   function verifyPasskey() {
     const passkeyInput = document.getElementById('passkeyInput').value;
-    const passkeyError = document.getElementById('passkeyError');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Get today's date in format yyyyMMdd (e.g., 20241219 for 19-12-2024)
     const today = new Date();
     const formattedDate = today.getFullYear() + 
                           today.getDate().toString().padStart(2, '0') + 
                           (today.getMonth() + 1).toString().padStart(2, '0');
-
-    // Verify passkey with today's date in yyyyddmm format
+    
+    // Compare input passkey with today's date in yyyyddmm format
     if (passkeyInput === formattedDate) {
-      animateOut(document.getElementById('passkeyForm'));
-      setTimeout(() => {
-        document.getElementById('passkeyForm').style.display = 'none';
-        document.getElementById('finalPage').style.display = 'block';
-        animateIn(document.getElementById('finalPage'));
-        setTimeout(function() {
-          window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
-        }, 2000);
-      }, 500);
+      document.getElementById('passkeyForm').style.display = 'none';
+      document.getElementById('finalPage').style.display = 'block';
+      fadeIn('#finalPage');
+      setTimeout(function() {
+        window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
+      }, 2000);
     } else {
-      passkeyError.style.display = 'block';
+      errorMessage.style.display = 'block';  // Show error message if passkey is incorrect
     }
   }
+  
+  // Initial animation for user form
+  fadeIn('#userForm');
 </script>
 
 </body>
