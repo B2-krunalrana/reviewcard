@@ -3,26 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Review Card indus soule </title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <title>Indus soul review card</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #4285f4;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #357ae8;
+    }
+    .otp-container, .final-container {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <div class="review-card">
-    <h1 class="card-title">Rate Your Experience test indus soule</h1>
-    <div class="stars">
-      <span data-rating="1">★</span>
-      <span data-rating="2">★</span>
-      <span data-rating="3">★</span>
-      <span data-rating="4">★</span>
-      <span data-rating="5">★</span>
-    </div>
-    <form id="reviewForm">
-      <input type="text" id="reviewInput" placeholder="Share your feedback" required>
-      <button type="submit">Submit</button>
-    </form>
-    <p id="thankYouMessage" class="hidden">Thank you for your review! 😊</p>
-  </div>
-  <script src="scripts.js"></script>
+
+<div class="container" id="userForm">
+  <h2>Enter Your Details</h2>
+  <input type="text" id="userName" class="input-field" placeholder="Your Name" />
+  <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
+  <button class="btn" id="nextBtn" onclick="goToOtp()">Next</button>
+</div>
+
+<div class="container otp-container" id="otpForm">
+  <h2>Enter OTP</h2>
+  <input type="text" id="otpInput" class="input-field" placeholder="Enter OTP" />
+  <button class="btn" onclick="verifyOtp()">Verify OTP</button>
+</div>
+
+<div class="container final-container" id="finalPage">
+  <h2>Thank you for verifying!</h2>
+  <p>Redirecting to review page...</p>
+</div>
+
+<script>
+  // Function to show OTP screen
+  function goToOtp() {
+    const userName = document.getElementById('userName').value;
+    const userPhone = document.getElementById('userPhone').value;
+
+    console.log('User Name:', userName);
+    console.log('User Phone:', userPhone);
+
+    if (userName && userPhone) {
+      document.getElementById('userForm').style.display = 'none';
+      document.getElementById('otpForm').style.display = 'block';
+    } else {
+      alert('Please fill in both name and phone number');
+    }
+  }
+
+  // Function to verify OTP
+  function verifyOtp() {
+    const otpInput = document.getElementById('otpInput').value;
+
+    if (otpInput === '2704') {
+      document.getElementById('otpForm').style.display = 'none';
+      document.getElementById('finalPage').style.display = 'block';
+      setTimeout(function() {
+        window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
+      }, 2000);
+    } else {
+      alert('Incorrect OTP');
+    }
+  }
+</script>
+
 </body>
 </html>
