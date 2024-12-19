@@ -26,8 +26,9 @@
       border-radius: 12px;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
       text-align: center;
-      transform: scale(1);
-      transition: transform 0.3s ease-in-out;
+      opacity: 0;
+      transform: translateY(20px);
+      display: none; /* Hide all cards initially */
     }
 
     h2 {
@@ -108,14 +109,15 @@
 <script>
   // GSAP Animation for smooth transitions
   function fadeIn(element) {
-    gsap.from(element, { opacity: 0, duration: 1, ease: 'power2.out' });
+    gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
   }
-  
+
   function goToPasskey() {
     const userName = document.getElementById('userName').value;
     const userPhone = document.getElementById('userPhone').value;
 
     if (userName && userPhone) {
+      // Hide current form and show the passkey form
       document.getElementById('userForm').style.display = 'none';
       document.getElementById('passkeyForm').style.display = 'block';
       fadeIn('#passkeyForm');
@@ -137,9 +139,12 @@
     
     // Compare input passkey with today's date in yyyyddmm format
     if (passkeyInput === formattedDate) {
+      // Hide current form and show the final page
       document.getElementById('passkeyForm').style.display = 'none';
       document.getElementById('finalPage').style.display = 'block';
       fadeIn('#finalPage');
+      
+      // Redirect after a small delay
       setTimeout(function() {
         window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
       }, 2000);
@@ -147,9 +152,13 @@
       errorMessage.style.display = 'block';  // Show error message if passkey is incorrect
     }
   }
-  
-  // Initial animation for user form
-  fadeIn('#userForm');
+
+  // Initial animation for the user form
+  window.onload = function() {
+    // Show the first card (userForm)
+    document.getElementById('userForm').style.display = 'block';
+    fadeIn('#userForm');
+  };
 </script>
 
 </body>
