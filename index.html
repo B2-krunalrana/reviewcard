@@ -53,9 +53,31 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
+      position: relative;
     }
     .btn:hover {
       background-color: #357ae8;
+    }
+    .btn.loading {
+      pointer-events: none;
+      background-color: #ccc;
+    }
+    .btn.loading:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      border: 3px solid white;
+      border-radius: 50%;
+      border-top: 3px solid transparent;
+      animation: spin 1s linear infinite;
+      transform: translate(-50%, -50%);
+    }
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
     .error-message {
       color: #ff4d4d;
@@ -79,136 +101,136 @@
   </style>
 </head>
 <body>
-  
+  <div class="container" id="userForm">
+    <h2>Enter Your Details</h2>
+    <input type="text" id="userName" class="input-field" placeholder="Your Name" />
+    <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
+    <button class="btn" id="nextBtn" onclick="goToPasskey()">Next</button>
+  </div>
 
-<div class="container" id="userForm">
-  <h2>Enter Your Details</h2>
-   <form method="post" action="" name="contact-form">
-      <h4>Contact Us</h4>
-      <input type="text" name="your-name" placeholder="Name">
-      <input type="text" name="your-number" placeholder="Number">
-<!--       <input type="email" name="your-email" placeholder="Email"> -->
-<!--       <textarea name="message" rows="7" placeholder="Your Message"> -->
-      </textarea>
-      <input type="submit" value="Submit" id="submit">
-		</form>
-  <input type="text" id="userName" class="input-field" placeholder="Your Name" />
-  <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
-  <button class="btn" id="nextBtn" onclick="goToPasskey()">Next</button>
-</div>
+  <div class="container otp-container" id="passkeyForm">
+    <h2>Enter Passkey</h2>
+    <input type="text" id="passkeyInput" class="input-field" placeholder="Enter Passkey (yyyyddmm)" />
+    <button class="btn" onclick="verifyPasskey()">Verify Passkey</button>
+    <p class="error-message" id="errorMessage" style="display:none;">Incorrect passkey. Please try again.</p>
+  </div>
 
-<div class="container otp-container" id="passkeyForm">
-  <h2>Enter Passkey</h2>
-  <input type="text" id="passkeyInput" class="input-field" placeholder="Enter Passkey (yyyyddmm)" />
-  <button class="btn" onclick="verifyPasskey()">Verify Passkey</button>
-  <p class="error-message" id="errorMessage" style="display:none;">Incorrect passkey. Please try again.</p>
-</div>
+  <div class="container final-container" id="finalPage">
+    <h2>Thank you for verifying!</h2>
+    <p>Redirecting to review page...</p>
+  </div>
 
-<div class="container final-container" id="finalPage">
-  <h2>Thank you for verifying!</h2>
-  <p>Redirecting to review page...</p>
-</div>
+  <footer id="footer">
+    <p id="deviceInfo">Loading device information...</p>
+  </footer>
 
-<footer id="footer">
-  <p id="deviceInfo">Loading device information...</p>
-</footer>
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwV9nHgAkkfH6cMKIW1hk1RQRUvs5Yie8e4feHpGM8gXxdxOT24ba7TooKbgUbLlOpo/exec';
+    const form = document.forms['contact-form'];
 
-<script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbwV9nHgAkkfH6cMKIW1hk1RQRUvs5Yie8e4feHpGM8gXxdxOT24ba7TooKbgUbLlOpo/exec'
-  const form = document.forms['contact-form']
-  form.addEventListener('submit', e => {
-    
-    e.preventDefault()
-    
-    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-    .then(response => alert("Thank you! Form is submitted" ))
-    .then(() => { window.location.reload(); })
-    .catch(error => console.error('Error!', error.message))
-  })
-  // GSAP Animation for smooth transitions
-  function fadeIn(element) {
-    gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
-  }
+    // GSAP Animation for smooth transitions
+    function fadeIn(element) {
+      gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
+    }
 
-  // Collect device and browser information
-  function getUserInfo() {
-    const userAgent = navigator.userAgent;
-    const platform = navigator.platform;
-    const language = navigator.language || navigator.userLanguage;
-    const screenWidth = window.screen.width;
-    const screenHeight = window.screen.height;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    // Collect device and browser information
+    function getUserInfo() {
+      const userAgent = navigator.userAgent;
+      const platform = navigator.platform;
+      const language = navigator.language || navigator.userLanguage;
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
 
-    const deviceInfo = {
-      userAgent: userAgent,
-      platform: platform,
-      language: language,
-      screenWidth: screenWidth,
-      screenHeight: screenHeight,
-      viewportWidth: viewportWidth,
-      viewportHeight: viewportHeight
+      const deviceInfo = {
+        userAgent: userAgent,
+        platform: platform,
+        language: language,
+        screenWidth: screenWidth,
+        screenHeight: screenHeight,
+        viewportWidth: viewportWidth,
+        viewportHeight: viewportHeight
+      };
+
+      console.log('Device Information:', deviceInfo);
+      return deviceInfo;
+    }
+
+    // Show the device info when the page loads
+    window.onload = function() {
+      const deviceInfo = getUserInfo(); // Get user device info
+      const infoString = `
+        User Agent: ${deviceInfo.userAgent}<br>
+        Platform: ${deviceInfo.platform}<br>
+        Language: ${deviceInfo.language}<br>
+        Screen: ${deviceInfo.screenWidth} x ${deviceInfo.screenHeight}<br>
+        Viewport: ${deviceInfo.viewportWidth} x ${deviceInfo.viewportHeight}
+      `;
+      document.getElementById('deviceInfo').innerHTML = infoString;
+      document.getElementById('userForm').style.display = 'block';
+      fadeIn('#userForm');
     };
 
-    console.log('Device Information:', deviceInfo);
-    return deviceInfo;
-  }
+    function goToPasskey() {
+      const userName = document.getElementById('userName').value;
+      const userPhone = document.getElementById('userPhone').value;
 
-  // Show the device info when the page loads
-  window.onload = function() {
-    const deviceInfo = getUserInfo(); // Get user device info
+      if (userName && userPhone) {
+        document.getElementById('nextBtn').classList.add('loading');
+        const deviceInfo = getUserInfo();
+        
+        // Prepare JSON data including device information
+        const jsonData = {
+          name: userName,
+          phone: userPhone,
+          device_remark: JSON.stringify(deviceInfo)
+        };
 
-    // Construct a string for device information to display in footer
-    const infoString = `
-      User Agent: ${deviceInfo.userAgent}<br>
-      Platform: ${deviceInfo.platform}<br>
-      Language: ${deviceInfo.language}<br>
-      Screen: ${deviceInfo.screenWidth} x ${deviceInfo.screenHeight}<br>
-      Viewport: ${deviceInfo.viewportWidth} x ${deviceInfo.viewportHeight}
-    `;
-
-    // Update the footer with device information
-    document.getElementById('deviceInfo').innerHTML = infoString;
-    
-    // Show the first card (userForm)
-    document.getElementById('userForm').style.display = 'block';
-    fadeIn('#userForm');
-  };
-
-  function goToPasskey() {
-    const userName = document.getElementById('userName').value;
-    const userPhone = document.getElementById('userPhone').value;
-
-    if (userName && userPhone) {
-      document.getElementById('userForm').style.display = 'none';
-      document.getElementById('passkeyForm').style.display = 'block';
-      fadeIn('#passkeyForm');
-    } else {
-      alert('Please fill in both name and phone number');
+        // Submit data to Google Sheets
+        fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify(jsonData),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => {
+          document.getElementById('nextBtn').classList.remove('loading');
+          document.getElementById('userForm').style.display = 'none';
+          document.getElementById('passkeyForm').style.display = 'block';
+          fadeIn('#passkeyForm');
+        })
+        .catch(error => {
+          console.error('Error!', error.message);
+          document.getElementById('nextBtn').classList.remove('loading');
+          alert('Error submitting data. Please try again.');
+        });
+      } else {
+        alert('Please fill in both name and phone number');
+      }
     }
-  }
 
-  function verifyPasskey() {
-    const passkeyInput = document.getElementById('passkeyInput').value;
-    const errorMessage = document.getElementById('errorMessage');
+    function verifyPasskey() {
+      const passkeyInput = document.getElementById('passkeyInput').value;
+      const errorMessage = document.getElementById('errorMessage');
 
-    const today = new Date();
-    const formattedDate = today.getFullYear() + 
-                          today.getDate().toString().padStart(2, '0') + 
-                          (today.getMonth() + 1).toString().padStart(2, '0');
+      const today = new Date();
+      const formattedDate = today.getFullYear() + 
+                            today.getDate().toString().padStart(2, '0') + 
+                            (today.getMonth() + 1).toString().padStart(2, '0');
 
-    if (passkeyInput === formattedDate) {
-      document.getElementById('passkeyForm').style.display = 'none';
-      document.getElementById('finalPage').style.display = 'block';
-      fadeIn('#finalPage');
-      setTimeout(function() {
-        window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
-      }, 2000);
-    } else {
-      errorMessage.style.display = 'block';
+      if (passkeyInput === formattedDate) {
+        document.getElementById('passkeyForm').style.display = 'none';
+        document.getElementById('finalPage').style.display = 'block';
+        fadeIn('#finalPage');
+        setTimeout(function() {
+          window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
+        }, 2000);
+      } else {
+        errorMessage.style.display = 'block';
+      }
     }
-  }
-</script>
-
+  </script>
 </body>
 </html>
