@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Indus Soul Review Card</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.4/mobile-detect.min.js"></script> <!-- Include mobile-detect.js -->
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -105,10 +104,12 @@
 </footer>
 
 <script>
+  // GSAP Animation for smooth transitions
   function fadeIn(element) {
     gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
   }
 
+  // Collect device and browser information
   function getUserInfo() {
     const userAgent = navigator.userAgent;
     const platform = navigator.platform;
@@ -118,10 +119,6 @@
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    // Initialize MobileDetect
-    const md = new MobileDetect(userAgent);
-    const mobileName = md.phone() || 'Not a mobile device';
-
     const deviceInfo = {
       userAgent: userAgent,
       platform: platform,
@@ -129,28 +126,30 @@
       screenWidth: screenWidth,
       screenHeight: screenHeight,
       viewportWidth: viewportWidth,
-      viewportHeight: viewportHeight,
-      mobileName: mobileName
+      viewportHeight: viewportHeight
     };
 
     console.log('Device Information:', deviceInfo);
     return deviceInfo;
   }
 
+  // Show the device info when the page loads
   window.onload = function() {
-    const deviceInfo = getUserInfo();
+    const deviceInfo = getUserInfo(); // Get user device info
 
+    // Construct a string for device information to display in footer
     const infoString = `
       User Agent: ${deviceInfo.userAgent}<br>
       Platform: ${deviceInfo.platform}<br>
       Language: ${deviceInfo.language}<br>
       Screen: ${deviceInfo.screenWidth} x ${deviceInfo.screenHeight}<br>
-      Viewport: ${deviceInfo.viewportWidth} x ${deviceInfo.viewportHeight}<br>
-      Mobile Device: ${deviceInfo.mobileName}
+      Viewport: ${deviceInfo.viewportWidth} x ${deviceInfo.viewportHeight}
     `;
 
+    // Update the footer with device information
     document.getElementById('deviceInfo').innerHTML = infoString;
-
+    
+    // Show the first card (userForm)
     document.getElementById('userForm').style.display = 'block';
     fadeIn('#userForm');
   };
@@ -169,14 +168,23 @@
   }
 
   function verifyPasskey() {
-    const passkey = document.getElementById('passkeyInput').value;
+    const passkeyInput = document.getElementById('passkeyInput').value;
+    const errorMessage = document.getElementById('errorMessage');
 
-    if (passkey === '20241226') { // Example passkey
+    const today = new Date();
+    const formattedDate = today.getFullYear() + 
+                          today.getDate().toString().padStart(2, '0') + 
+                          (today.getMonth() + 1).toString().padStart(2, '0');
+
+    if (passkeyInput === formattedDate) {
       document.getElementById('passkeyForm').style.display = 'none';
       document.getElementById('finalPage').style.display = 'block';
       fadeIn('#finalPage');
+      setTimeout(function() {
+        window.location.href = "https://g.page/r/CS35wptgOQTBEAE/review";
+      }, 2000);
     } else {
-      document.getElementById('errorMessage').style.display = 'block';
+      errorMessage.style.display = 'block';
     }
   }
 </script>
