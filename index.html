@@ -83,15 +83,12 @@
 
 <div class="container" id="userForm">
   <h2>Enter Your Details</h2>
-   <form method="post" action="" name="contact-form">
-      <h4>Contact Us</h4>
-      <input type="text" name="your-name" placeholder="Name">
-      <input type="text" name="your-number" placeholder="Number">
-<!--       <input type="email" name="your-email" placeholder="Email"> -->
-<!--       <textarea name="message" rows="7" placeholder="Your Message"> -->
-      </textarea>
-      <input type="submit" value="Submit" id="submit">
-		</form>
+  <form method="post" action="" name="contact-form">
+    <h4>Contact Us</h4>
+    <input type="text" name="your-name" placeholder="Name" required>
+    <input type="text" name="your-number" placeholder="Number" required>
+    <input type="submit" value="Submit" id="submit">
+  </form>
   <input type="text" id="userName" class="input-field" placeholder="Your Name" />
   <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
   <button class="btn" id="nextBtn" onclick="goToPasskey()">Next</button>
@@ -114,17 +111,16 @@
 </footer>
 
 <script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbwV9nHgAkkfH6cMKIW1hk1RQRUvs5Yie8e4feHpGM8gXxdxOT24ba7TooKbgUbLlOpo/exec'
-  const form = document.forms['contact-form']
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwV9nHgAkkfH6cMKIW1hk1RQRUvs5Yie8e4feHpGM8gXxdxOT24ba7TooKbgUbLlOpo/exec';
+  const form = document.forms['contact-form'];
   form.addEventListener('submit', e => {
-    
-    e.preventDefault()
-    
-    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-    .then(response => alert("Thank you! Form is submitted" ))
+    e.preventDefault();
+    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+    .then(response => alert("Thank you! Form is submitted"))
     .then(() => { window.location.reload(); })
-    .catch(error => console.error('Error!', error.message))
-  })
+    .catch(error => console.error('Error!', error.message));
+  });
+
   // GSAP Animation for smooth transitions
   function fadeIn(element) {
     gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
@@ -157,8 +153,6 @@
   // Show the device info when the page loads
   window.onload = function() {
     const deviceInfo = getUserInfo(); // Get user device info
-
-    // Construct a string for device information to display in footer
     const infoString = `
       User Agent: ${deviceInfo.userAgent}<br>
       Platform: ${deviceInfo.platform}<br>
@@ -167,10 +161,7 @@
       Viewport: ${deviceInfo.viewportWidth} x ${deviceInfo.viewportHeight}
     `;
 
-    // Update the footer with device information
     document.getElementById('deviceInfo').innerHTML = infoString;
-    
-    // Show the first card (userForm)
     document.getElementById('userForm').style.display = 'block';
     fadeIn('#userForm');
   };
