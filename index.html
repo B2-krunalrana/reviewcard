@@ -80,8 +80,10 @@
 </head>
 <body>
   
-<div class="container">
-    <form method="post" action="" name="contact-form">
+
+<div class="container" id="userForm">
+  <h2>Enter Your Details</h2>
+   <form method="post" action="" name="contact-form">
       <h4>Contact Us</h4>
       <input type="text" name="your-name" placeholder="Name">
       <input type="text" name="your-number" placeholder="Number">
@@ -90,9 +92,6 @@
       </textarea>
       <input type="submit" value="Submit" id="submit">
 		</form>
-	</div>
-<div class="container" id="userForm">
-  <h2>Enter Your Details</h2>
   <input type="text" id="userName" class="input-field" placeholder="Your Name" />
   <input type="text" id="userPhone" class="input-field" placeholder="Your Phone Number" />
   <button class="btn" id="nextBtn" onclick="goToPasskey()">Next</button>
