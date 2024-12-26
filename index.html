@@ -79,7 +79,18 @@
   </style>
 </head>
 <body>
-
+  
+<div class="container">
+    <form method="post" action="https://script.google.com/macros/s/AKfycbwV9nHgAkkfH6cMKIW1hk1RQRUvs5Yie8e4feHpGM8gXxdxOT24ba7TooKbgUbLlOpo/exec" name="contact-form">
+      <h4>Contact Us</h4>
+      <input type="text" name="your-name" placeholder="Name">
+      <input type="text" name="your-number" placeholder="Number">
+<!--       <input type="email" name="your-email" placeholder="Email"> -->
+<!--       <textarea name="message" rows="7" placeholder="Your Message"> -->
+      </textarea>
+      <input type="submit" value="Submit" id="submit">
+		</form>
+	</div>
 <div class="container" id="userForm">
   <h2>Enter Your Details</h2>
   <input type="text" id="userName" class="input-field" placeholder="Your Name" />
@@ -104,6 +115,17 @@
 </footer>
 
 <script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwV9nHgAkkfH6cMKIW1hk1RQRUvs5Yie8e4feHpGM8gXxdxOT24ba7TooKbgUbLlOpo/exec'
+  const form = document.forms['contact-form']
+  form.addEventListener('submit', e => {
+    
+    e.preventDefault()
+    
+    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+    .then(response => alert("Thank you! Form is submitted" ))
+    .then(() => { window.location.reload(); })
+    .catch(error => console.error('Error!', error.message))
+  })
   // GSAP Animation for smooth transitions
   function fadeIn(element) {
     gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
