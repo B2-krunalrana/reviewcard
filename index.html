@@ -53,31 +53,9 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      position: relative;
     }
     .btn:hover {
       background-color: #357ae8;
-    }
-    .btn.loading {
-      pointer-events: none;
-      background-color: #ccc;
-    }
-    .btn.loading:after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      border: 3px solid white;
-      border-radius: 50%;
-      border-top: 3px solid transparent;
-      animation: spin 1s linear infinite;
-      transform: translate(-50%, -50%);
-    }
-    @keyframes spin {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
     .error-message {
       color: #ff4d4d;
@@ -125,9 +103,6 @@
   </footer>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwV9nHgAkkfH6cMKIW1hk1RQRUvs5Yie8e4feHpGM8gXxdxOT24ba7TooKbgUbLlOpo/exec';
-    const form = document.forms['contact-form'];
-
     // GSAP Animation for smooth transitions
     function fadeIn(element) {
       gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' });
@@ -160,6 +135,8 @@
     // Show the device info when the page loads
     window.onload = function() {
       const deviceInfo = getUserInfo(); // Get user device info
+
+      // Construct a string for device information to display in footer
       const infoString = `
         User Agent: ${deviceInfo.userAgent}<br>
         Platform: ${deviceInfo.platform}<br>
@@ -167,7 +144,11 @@
         Screen: ${deviceInfo.screenWidth} x ${deviceInfo.screenHeight}<br>
         Viewport: ${deviceInfo.viewportWidth} x ${deviceInfo.viewportHeight}
       `;
+
+      // Update the footer with device information
       document.getElementById('deviceInfo').innerHTML = infoString;
+      
+      // Show the first card (userForm)
       document.getElementById('userForm').style.display = 'block';
       fadeIn('#userForm');
     };
@@ -177,36 +158,9 @@
       const userPhone = document.getElementById('userPhone').value;
 
       if (userName && userPhone) {
-        document.getElementById('nextBtn').classList.add('loading');
-        const deviceInfo = getUserInfo();
-        
-        // Prepare JSON data including device information
-        const jsonData = {
-          name: userName,
-          phone: userPhone
-          // ,
-          // device_remark: JSON.stringify(deviceInfo)
-        };
-
-        // Submit data to Google Sheets
-        fetch(scriptURL, {
-          method: 'POST',
-          body: JSON.stringify(jsonData),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(response => {
-          document.getElementById('nextBtn').classList.remove('loading');
-          document.getElementById('userForm').style.display = 'none';
-          document.getElementById('passkeyForm').style.display = 'block';
-          fadeIn('#passkeyForm');
-        })
-        .catch(error => {
-          console.error('Error!', error.message);
-          document.getElementById('nextBtn').classList.remove('loading');
-          alert('Error submitting data. Please try again.');
-        });
+        document.getElementById('userForm').style.display = 'none';
+        document.getElementById('passkeyForm').style.display = 'block';
+        fadeIn('#passkeyForm');
       } else {
         alert('Please fill in both name and phone number');
       }
@@ -218,8 +172,8 @@
 
       const today = new Date();
       const formattedDate = today.getFullYear() + 
-                            today.getDate().toString().padStart(2, '0') + 
-                            (today.getMonth() + 1).toString().padStart(2, '0');
+                            (today.getMonth() + 1).toString().padStart(2, '0') + 
+                            today.getDate().toString().padStart(2, '0');
 
       if (passkeyInput === formattedDate) {
         document.getElementById('passkeyForm').style.display = 'none';
